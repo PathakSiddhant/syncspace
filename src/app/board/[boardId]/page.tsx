@@ -6,6 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Canvas } from "@/components/board/canvas";
+import { Room } from "@/components/board/room";
 
 interface BoardPageProps {
   params: {
@@ -53,14 +54,16 @@ export default async function BoardPage({ params }: BoardPageProps) {
         {/* Placeholder for future collaboration avatars */}
         <div className="flex items-center gap-3">
           <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
-            Local Setup
+            Live Setup
           </span>
         </div>
       </div>
       
-      {/* THE ACTUAL INFINITE CANVAS */}
+      {/* THE ACTUAL INFINITE CANVAS WAPPED IN LIVE ROOM */}
       <div className="flex-1 relative w-full h-full">
-        <Canvas boardId={boardId} />
+        <Room roomId={boardId}>
+          <Canvas boardId={boardId} />
+        </Room>
       </div>
     </div>
   );
