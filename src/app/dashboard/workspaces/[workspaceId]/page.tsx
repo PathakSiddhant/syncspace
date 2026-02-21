@@ -6,16 +6,16 @@ import { notFound, redirect } from "next/navigation";
 import { PlusCircle, Presentation, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { CreateBoardModal } from "@/components/modals/create-board-modal"; // 🔥 NEW IMPORT
 
 interface WorkspacePageProps {
-  // Added Promise here to prevent TypeScript errors when awaiting params
-  params: Promise<{
+  params: {
     workspaceId: string;
-  }>;
+  };
 }
 
 export default async function WorkspacePage({ params }: WorkspacePageProps) {
-  // 🔥 THE FIX: Await the params first!
+  // Await the params to avoid Next.js Promise errors
   const resolvedParams = await params;
   const workspaceId = resolvedParams.workspaceId;
 
@@ -29,9 +29,9 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
   const [workspace] = await db
     .select()
     .from(workspaces)
-    .where(eq(workspaces.id, workspaceId)); // <-- Updated to use awaited workspaceId
+    .where(eq(workspaces.id, workspaceId));
 
-  // 2. Security Check: If workspace doesn't exist or user doesn't own it, throw 404
+  // 2. Security Check
   if (!workspace || workspace.ownerId !== userId) {
     notFound();
   }
@@ -40,7 +40,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
   const workspaceBoards = await db
     .select()
     .from(boards)
-    .where(eq(boards.workspaceId, workspaceId)) // <-- Updated to use awaited workspaceId
+    .where(eq(boards.workspaceId, workspaceId))
     .orderBy(desc(boards.updatedAt));
 
   return (
@@ -57,11 +57,8 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
           <p className="text-neutral-400 mt-2">Manage all your canvas boards for this workspace here.</p>
         </div>
         
-        {/* Placeholder for Create Board Button */}
-        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 transition-all">
-          <PlusCircle className="w-4 h-4" />
-          New Board
-        </Button>
+        {/* 🔥 NEW: The functional Create Board Modal for the header */}
+        <CreateBoardModal workspaceId={workspaceId} />
       </div>
 
       {/* Boards Grid or Empty State */}
@@ -74,16 +71,21 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
           <p className="text-neutral-400 max-w-sm text-center mb-6">
             Your workspace is empty. Create your first Zyncro board to start collaborating in real-time.
           </p>
-          <Button className="bg-white text-black hover:bg-neutral-200 gap-2">
-            Create First Board
-          </Button>
+          
+          {/* 🔥 NEW: Using our Modal with a custom button design as children! */}
+          <CreateBoardModal workspaceId={workspaceId}>
+            <Button className="bg-white text-black hover:bg-neutral-200 gap-2">
+              <PlusCircle className="w-4 h-4" />
+              Create First Board
+            </Button>
+          </CreateBoardModal>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {workspaceBoards.map((board) => (
             <Link href={`/board/${board.id}`} key={board.id}>
               <div className="group relative flex flex-col justify-between p-6 h-48 bg-neutral-900/50 border border-neutral-800 rounded-xl hover:border-emerald-500/50 hover:bg-neutral-800/50 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-emerald-900/10">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 bg-linear-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 
                 <div>
                   <div className="flex items-center gap-3 mb-4">
