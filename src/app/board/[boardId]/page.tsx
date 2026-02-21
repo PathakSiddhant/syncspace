@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Canvas } from "@/components/board/canvas";
 import { Room } from "@/components/board/room";
+import { ShareModal } from "@/components/board/share-modal";
 
 interface BoardPageProps {
   params: {
@@ -31,10 +32,12 @@ export default async function BoardPage({ params }: BoardPageProps) {
     .from(boards)
     .where(eq(boards.id, boardId));
 
-  // Security Check
-  if (!board || board.creatorId !== userId) {
+  if (!board) {
     notFound();
   }
+
+  // 🔥 DETERMINE IF CURRENT USER IS THE OWNER
+  const isOwner = board.creatorId === userId;
 
   return (
     <div className="h-screen w-full bg-neutral-950 flex flex-col overflow-hidden text-white">
@@ -51,15 +54,24 @@ export default async function BoardPage({ params }: BoardPageProps) {
           <h1 className="font-semibold text-lg tracking-tight">{board.title}</h1>
         </div>
         
-        {/* Placeholder for future collaboration avatars */}
         <div className="flex items-center gap-3">
-          <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
-            Live Setup
+          {/* Agar user owner nahi hai, toh use sirf "View Only" ya "Guest" badge dikhega */}
+          {!isOwner && (
+            <span className="text-xs bg-neutral-800 text-neutral-400 px-2 py-1 rounded border border-neutral-700 mr-2">
+              Guest Access
+            </span>
+          )}
+          
+          <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20 mr-2">
+            Live
           </span>
+          
+          {/* 🔥 ONLY RENDER SHARE BUTTON IF IS OWNER */}
+          {isOwner && <ShareModal boardId={boardId} boardTitle={board.title} />}
         </div>
       </div>
       
-      {/* THE ACTUAL INFINITE CANVAS WAPPED IN LIVE ROOM */}
+      {/* THE ACTUAL INFINITE CANVAS WRAPPED IN LIVE ROOM */}
       <div className="flex-1 relative w-full h-full">
         <Room roomId={boardId}>
           <Canvas boardId={boardId} />
