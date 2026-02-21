@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CreateBoardModal } from "@/components/modals/create-board-modal"; // 🔥 NEW IMPORT
 
+
 interface WorkspacePageProps {
   params: {
     workspaceId: string;
@@ -57,8 +58,10 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
           <p className="text-neutral-400 mt-2">Manage all your canvas boards for this workspace here.</p>
         </div>
         
-        {/* 🔥 NEW: The functional Create Board Modal for the header */}
-        <CreateBoardModal workspaceId={workspaceId} />
+        {/* The Action Buttons */}
+        <div className="flex items-center gap-3">
+         <CreateBoardModal workspaceId={workspaceId} />
+        </div>
       </div>
 
       {/* Boards Grid or Empty State */}
