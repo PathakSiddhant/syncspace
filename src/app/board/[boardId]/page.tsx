@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Canvas } from "@/components/board/canvas";
 
 interface BoardPageProps {
   params: {
@@ -37,7 +38,7 @@ export default async function BoardPage({ params }: BoardPageProps) {
   return (
     <div className="h-screen w-full bg-neutral-950 flex flex-col overflow-hidden text-white">
       {/* Board Header / Topbar */}
-      <div className="h-14 border-b border-neutral-800 bg-neutral-900/50 flex items-center px-4 justify-between shrink-0">
+      <div className="h-14 border-b border-neutral-800 bg-neutral-900/50 flex items-center px-4 justify-between shrink-0 relative z-50">
         <div className="flex items-center gap-4">
           <Link 
             href={`/dashboard/workspaces/${board.workspaceId}`}
@@ -52,20 +53,14 @@ export default async function BoardPage({ params }: BoardPageProps) {
         {/* Placeholder for future collaboration avatars */}
         <div className="flex items-center gap-3">
           <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
-            Live Setup Pending
+            Local Setup
           </span>
         </div>
       </div>
       
-      {/* The Infinite Canvas Area */}
-      <div className="flex-1 relative bg-[#0f0f0f] w-full h-full flex items-center justify-center">
-        {/* Dot pattern background for that premium canvas feel */}
-        <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#404040 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-        
-        <div className="relative z-10 flex flex-col items-center gap-4 animate-pulse">
-          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-neutral-400 font-medium">Initializing Whiteboard Engine...</p>
-        </div>
+      {/* THE ACTUAL INFINITE CANVAS */}
+      <div className="flex-1 relative w-full h-full">
+        <Canvas boardId={boardId} />
       </div>
     </div>
   );
