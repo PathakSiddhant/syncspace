@@ -14,7 +14,9 @@
     "@liveblocks/client": "^3.14.0",
     "@liveblocks/node": "^3.14.0",
     "@liveblocks/react": "^3.14.0",
+    "@liveblocks/yjs": "^3.14.0",
     "@neondatabase/serverless": "^1.0.2",
+    "@tldraw/sync": "^4.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
@@ -27,7 +29,8 @@
     "react-dom": "19.2.3",
     "svix": "^1.85.0",
     "tailwind-merge": "^3.5.0",
-    "tldraw": "^4.4.0"
+    "tldraw": "^4.4.0",
+    "yjs": "^13.6.29"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
