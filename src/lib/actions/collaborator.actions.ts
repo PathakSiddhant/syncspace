@@ -52,8 +52,8 @@ export async function addCollaborator(boardId: string, email: string, accessType
     revalidatePath(`/board/${boardId}`);
     
     return { success: true, message: `Successfully added ${email}` };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error adding collaborator:", error);
-    return { success: false, error: error.message || "Failed to add collaborator" };
+    return { success: false, error: error instanceof Error ? error.message : "Failed to add collaborator" };
   }
 }

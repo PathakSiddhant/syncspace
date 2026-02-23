@@ -25,6 +25,10 @@ export const boards = pgTable("boards", {
   workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
   creatorId: text("creator_id").notNull().references(() => users.id),
   isFavorite: boolean("is_favorite").default(false).notNull(),
+  
+  // 🔥 NEW: Public link sharing status!
+  linkAccess: text("link_access").notNull().default("private"), // 'private', 'view', or 'edit'
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
