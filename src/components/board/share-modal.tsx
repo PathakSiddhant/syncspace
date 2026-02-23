@@ -5,7 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Check, Users, Globe, ShieldAlert } from "lucide-react";
+import { Copy, Check, Users, Globe, ShieldAlert, Loader2 } from "lucide-react";
+import { addCollaborator } from "@/lib/actions/collaborator.actions"; // 🔥 NEW IMPORT
 
 interface ShareModalProps {
   boardId: string;
@@ -16,7 +17,9 @@ export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [email, setEmail] = useState("");
   const [emailPermission, setEmailPermission] = useState("edit");
-  const [linkPermission, setLinkPermission] = useState("view"); // 🔥 New state for link
+  const [linkPermission, setLinkPermission] = useState("view");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState(""); // Success ya error dikhane ke liye
 
   const onCopyLink = () => {
     const url = `${window.location.origin}/board/${boardId}`;
@@ -25,11 +28,27 @@ export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const onInvite = (e: React.FormEvent) => {
+  const onInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    alert(`Invite sent to ${email} with ${emailPermission} access! (DB integration coming soon)`);
-    setEmail("");
+    
+    setIsLoading(true);
+    setMessage("");
+
+    // 🔥 Call our secure Server Action
+    const result = await addCollaborator(boardId, email, emailPermission);
+
+    if (result.success) {
+      setMessage("Invite sent successfully!");
+      setEmail("");
+    } else {
+      setMessage(result.error || "Failed to invite");
+    }
+    
+    setIsLoading(false);
+    
+    // 3 seconds baad message gayab kar do
+    setTimeout(() => setMessage(""), 3000);
   };
 
   return (
@@ -63,31 +82,37 @@ export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-neutral-800 border-neutral-700 text-white focus-visible:ring-emerald-500 h-10"
                 type="email"
+                disabled={isLoading}
               />
               <select 
                 value={emailPermission}
                 onChange={(e) => setEmailPermission(e.target.value)}
-                className="bg-neutral-800 border-neutral-700 text-sm rounded-md px-3 text-white outline-none focus:ring-1 focus:ring-emerald-500"
+                disabled={isLoading}
+                className="bg-neutral-800 border-neutral-700 text-sm rounded-md px-3 text-white outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
               >
                 <option value="edit">Can edit</option>
                 <option value="view">Can view</option>
               </select>
-              <Button type="submit" className="bg-white text-black hover:bg-neutral-200 h-10">
-                Invite
+              <Button type="submit" disabled={isLoading || !email.trim()} className="bg-white text-black hover:bg-neutral-200 h-10 w-20">
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Invite"}
               </Button>
             </form>
+            {message && (
+              <p className={`text-xs ${message.includes("success") ? "text-emerald-500" : "text-red-500"}`}>
+                {message}
+              </p>
+            )}
           </div>
 
           <div className="h-px w-full bg-neutral-800"></div>
 
-          {/* Section 2: Copy Link with Permissions */}
+          {/* Section 2: Copy Link */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <Label className="text-neutral-300 font-medium text-sm flex items-center gap-2">
                 <Globe className="w-4 h-4 text-emerald-500" />
                 Anyone with the link
               </Label>
-              {/* 🔥 Link Permission Toggle */}
               <select 
                 value={linkPermission}
                 onChange={(e) => setLinkPermission(e.target.value)}
@@ -114,7 +139,6 @@ export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
               </Button>
             </div>
             
-            {/* Host Controls Teaser */}
             <div className="mt-4 p-3 bg-neutral-800/30 border border-neutral-800 rounded-lg">
               <p className="text-xs text-neutral-400 leading-relaxed">
                 <strong className="text-white">Host Controls:</strong> As the owner, you will be able to manage active users, update their display names, and revoke edit access mid-session from the dashboard.
