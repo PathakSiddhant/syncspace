@@ -53,3 +53,22 @@ export const boardsRelations = relations(boards, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+// 🔥 NEW: The Collaborators Table for Host Controls & Permissions
+export const collaborators = pgTable("collaborators", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  
+  // Jis board ka access diya jaa raha hai (If board is deleted, delete collaborators too)
+  boardId: uuid("board_id")
+    .references(() => boards.id, { onDelete: "cascade" })
+    .notNull(),
+  
+  // Jisko invite kiya jaa raha hai (Email use kar rahe hain taaki bina account wale ko bhi invite bhej sakein)
+  email: text("email").notNull(),
+  
+  // Permission Level: 'view' ya 'edit'
+  accessType: text("access_type").notNull().default("view"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
