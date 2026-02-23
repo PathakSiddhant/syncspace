@@ -3,23 +3,19 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Copy, Check, Users, Globe, ShieldAlert, Loader2 } from "lucide-react";
-import { addCollaborator } from "@/lib/actions/collaborator.actions"; // 🔥 NEW IMPORT
+import { Copy, Check, Users, Globe, Lock, Loader2 } from "lucide-react";
+import { updateBoardLinkAccess } from "@/lib/actions/board.actions";
 
 interface ShareModalProps {
   boardId: string;
   boardTitle: string;
+  initialLinkAccess: string;
 }
 
-export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
+export function ShareModal({ boardId, boardTitle, initialLinkAccess }: ShareModalProps) {
   const [isCopied, setIsCopied] = useState(false);
-  const [email, setEmail] = useState("");
-  const [emailPermission, setEmailPermission] = useState("edit");
-  const [linkPermission, setLinkPermission] = useState("view");
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState(""); // Success ya error dikhane ke liye
+  const [generalAccess, setGeneralAccess] = useState(initialLinkAccess || "private");
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const onCopyLink = () => {
     const url = `${window.location.origin}/board/${boardId}`;
@@ -28,27 +24,16 @@ export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const onInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
+  const handleAccessChange = async (newAccess: string) => {
+    setGeneralAccess(newAccess);
+    setIsUpdating(true);
     
-    setIsLoading(true);
-    setMessage("");
-
-    // 🔥 Call our secure Server Action
-    const result = await addCollaborator(boardId, email, emailPermission);
-
-    if (result.success) {
-      setMessage("Invite sent successfully!");
-      setEmail("");
-    } else {
-      setMessage(result.error || "Failed to invite");
+    const result = await updateBoardLinkAccess(boardId, newAccess);
+    if (!result.success) {
+      alert("Failed to update access");
+      setGeneralAccess(generalAccess);
     }
-    
-    setIsLoading(false);
-    
-    // 3 seconds baad message gayab kar do
-    setTimeout(() => setMessage(""), 3000);
+    setIsUpdating(false);
   };
 
   return (
@@ -60,91 +45,49 @@ export function ShareModal({ boardId, boardTitle }: ShareModalProps) {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-112.5 bg-neutral-900 border-neutral-800 text-white shadow-2xl">
+      <DialogContent className="sm:max-w-106.25 bg-neutral-900 border-neutral-800 text-white shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold tracking-tight flex items-center gap-2">
-            Share &quot;{boardTitle}&quot;
-          </DialogTitle>
+          <DialogTitle className="text-xl font-bold tracking-tight">Share &quot;{boardTitle}&quot;</DialogTitle>
         </DialogHeader>
         
         <div className="flex flex-col gap-6 py-4">
           
-          {/* Section 1: Email Invite */}
-          <div className="space-y-3">
-            <Label className="text-neutral-300 font-medium text-sm flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-emerald-500" />
-              Invite specific people
-            </Label>
-            <form onSubmit={onInvite} className="flex gap-2">
-              <Input
-                placeholder="Email address..."
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-neutral-800 border-neutral-700 text-white focus-visible:ring-emerald-500 h-10"
-                type="email"
-                disabled={isLoading}
-              />
+          <div className="flex justify-between items-center bg-neutral-800/50 p-3 rounded-lg border border-neutral-800">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-neutral-800 rounded-md">
+                {generalAccess === "private" ? <Lock className="w-4 h-4 text-neutral-400" /> : <Globe className="w-4 h-4 text-emerald-500" />}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-white">General Access</p>
+                <p className="text-xs text-neutral-400">
+                  {generalAccess === "private" ? "Restricted" : "Anyone with link"}
+                </p>
+              </div>
+            </div>
+
+            {isUpdating ? (
+              <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
+            ) : (
               <select 
-                value={emailPermission}
-                onChange={(e) => setEmailPermission(e.target.value)}
-                disabled={isLoading}
-                className="bg-neutral-800 border-neutral-700 text-sm rounded-md px-3 text-white outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
+                value={generalAccess}
+                onChange={(e) => handleAccessChange(e.target.value)}
+                className="bg-neutral-900 border border-neutral-700 text-sm rounded-md px-2 py-1.5 text-white outline-none cursor-pointer focus:ring-1 focus:ring-emerald-500"
               >
-                <option value="edit">Can edit</option>
-                <option value="view">Can view</option>
+                <option value="private">Restricted</option>
+                <option value="view">Viewer</option>
+                <option value="edit">Editor</option>
+                {/* Note: Tldraw doesn't have a native 'comment' mode yet, we will add that custom later! */}
               </select>
-              <Button type="submit" disabled={isLoading || !email.trim()} className="bg-white text-black hover:bg-neutral-200 h-10 w-20">
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Invite"}
-              </Button>
-            </form>
-            {message && (
-              <p className={`text-xs ${message.includes("success") ? "text-emerald-500" : "text-red-500"}`}>
-                {message}
-              </p>
             )}
           </div>
 
-          <div className="h-px w-full bg-neutral-800"></div>
-
-          {/* Section 2: Copy Link */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <Label className="text-neutral-300 font-medium text-sm flex items-center gap-2">
-                <Globe className="w-4 h-4 text-emerald-500" />
-                Anyone with the link
-              </Label>
-              <select 
-                value={linkPermission}
-                onChange={(e) => setLinkPermission(e.target.value)}
-                className="bg-transparent border-none text-sm text-emerald-400 outline-none cursor-pointer hover:text-emerald-300 transition-colors text-right"
-              >
-                <option value="view" className="bg-neutral-900">Can view</option>
-                <option value="edit" className="bg-neutral-900">Can edit</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2 p-2 bg-neutral-800/50 border border-neutral-800 rounded-md">
-              <Input
-                readOnly
-                value={`${typeof window !== 'undefined' ? window.location.origin : ''}/board/${boardId}`}
-                className="bg-transparent border-0 focus-visible:ring-0 text-neutral-400 h-8 font-mono text-xs"
-              />
-              <Button 
-                onClick={onCopyLink} 
-                variant="outline" 
-                className={`h-8 px-3 gap-2 border-neutral-700 hover:text-white transition-all ${isCopied ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/50' : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'}`}
-              >
-                {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {isCopied ? "Copied" : "Copy"}
-              </Button>
-            </div>
-            
-            <div className="mt-4 p-3 bg-neutral-800/30 border border-neutral-800 rounded-lg">
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                <strong className="text-white">Host Controls:</strong> As the owner, you will be able to manage active users, update their display names, and revoke edit access mid-session from the dashboard.
-              </p>
-            </div>
-          </div>
+          <Button 
+            onClick={onCopyLink} 
+            className={`w-full h-10 gap-2 transition-all ${isCopied ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-white text-black hover:bg-neutral-200'}`}
+          >
+            {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            {isCopied ? "Link Copied" : "Copy Link"}
+          </Button>
 
         </div>
       </DialogContent>
