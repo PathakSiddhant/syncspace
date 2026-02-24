@@ -1,37 +1,32 @@
 "use client";
 
 import { ReactNode } from "react";
-import {
-  LiveblocksProvider,
-  RoomProvider,
-  ClientSideSuspense,
-} from "@liveblocks/react/suspense";
+import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react/suspense";
 import { Loader2 } from "lucide-react";
 
-export function Room({ 
-  children, 
-  roomId 
-}: { 
-  children: ReactNode; 
-  roomId: string; 
-}) {
+interface RoomProps {
+  children: ReactNode;
+  roomId: string;
+}
+
+export function Room({ children, roomId }: RoomProps) {
   return (
-    // Ye provider hamare auth API ko call karta hai access lene ke liye
+    // 🔥 THE MISSING ENGINE: Telling Liveblocks where to check permissions
     <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
-      
-      {/* Ye provider ek specific board id ka "Room" banata hai */}
-      <RoomProvider id={roomId}>
-        
-        {/* Jab tak WebSocket connection ban raha hai, ek mast loading screen dikhao */}
-        <ClientSideSuspense fallback={
-          <div className="flex flex-col items-center justify-center h-full w-full bg-neutral-950 text-white">
-            <Loader2 className="w-10 h-10 animate-spin text-emerald-500 mb-4" />
-            <p className="text-neutral-400 font-medium">Connecting to live room...</p>
-          </div>
-        }>
+      <RoomProvider id={roomId} initialPresence={{}}>
+        <ClientSideSuspense 
+          fallback={
+            // 💅 THE PREMIUM LOADING SCREEN
+            <div className="absolute inset-0 h-screen w-screen flex flex-col items-center justify-center bg-neutral-950 text-emerald-500 z-99999">
+              <Loader2 className="w-12 h-12 animate-spin mb-6" />
+              <p className="text-sm font-medium text-neutral-400 animate-pulse tracking-wider uppercase">
+                Entering Zyncro Canvas...
+              </p>
+            </div>
+          }
+        >
           {children}
         </ClientSideSuspense>
-
       </RoomProvider>
     </LiveblocksProvider>
   );
