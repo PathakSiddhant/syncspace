@@ -9,6 +9,7 @@ import { Canvas } from "@/components/board/canvas";
 import { Room } from "@/components/board/room";
 import { ShareModal } from "@/components/board/share-modal";
 import { LiveUsers } from "@/components/board/live-users";
+import { LiveChat } from "@/components/board/live-chat"; // 🔥 NEW IMPORT
 
 interface BoardPageProps {
   params: { boardId: string; };
@@ -71,9 +72,12 @@ export default async function BoardPage({ params }: BoardPageProps) {
           </div>
         </div>
         
-        {/* THE CANVAS */}
+        {/* THE CANVAS & FLOATING WIDGETS */}
         <div className="flex-1 relative w-full h-full">
           <Canvas boardId={boardId} isReadonly={isReadonly} />
+          
+          {/* 🔥 THE NEW LIVE CHAT WIDGET */}
+          <LiveChat />
         </div>
         
       </div>
