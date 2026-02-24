@@ -59,3 +59,44 @@ export async function updateBoardLinkAccess(boardId: string, linkAccess: string)
     };
   }
 }
+
+// 🔥 3. RENAME BOARD
+export async function renameBoard(boardId: string, workspaceId: string, newTitle: string) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const [board] = await db.select().from(boards).where(eq(boards.id, boardId));
+    if (!board || board.creatorId !== userId) {
+      throw new Error("Only the owner can rename this board");
+    }
+
+    await db.update(boards).set({ title: newTitle }).where(eq(boards.id, boardId));
+    revalidatePath(`/dashboard/workspaces/${workspaceId}`);
+    
+    return { success: true };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : "Failed to rename" };
+  }
+}
+
+// 🔥 4. DELETE BOARD
+export async function deleteBoard(boardId: string, workspaceId: string) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const [board] = await db.select().from(boards).where(eq(boards.id, boardId));
+    if (!board || board.creatorId !== userId) {
+      throw new Error("Only the owner can delete this board");
+    }
+
+    // Delete the board (Neon DB will also auto-delete collaborators because of cascade!)
+    await db.delete(boards).where(eq(boards.id, boardId));
+    revalidatePath(`/dashboard/workspaces/${workspaceId}`);
+    
+    return { success: true };
+  } catch (error: unknown) {
+    return { success: false, error: error instanceof Error ? error.message : "Failed to delete" };
+  }
+}
