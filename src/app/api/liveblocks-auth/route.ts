@@ -24,22 +24,20 @@ export async function POST(request: Request) {
 
   const isOwner = board.creatorId === user.id;
 
-  // 2. Prepare Liveblocks Session
+  // 2. Prepare Liveblocks Session (With Email payload for our role switching logic)
   const session = liveblocks.prepareSession(user.id, {
     userInfo: {
       name: user.firstName || "Zyncro User",
       picture: user.imageUrl,
-      email: user.emailAddresses[0].emailAddress, // 🔥 NEW: We need this to change roles!
+      email: user.emailAddresses[0].emailAddress,
     },
   });
 
-  // 🔥 3. THE NEW, CLEAN ACCESS LOGIC (Link Based)
-  if (isOwner) {
+  // 🔥 3. THE CHAT FIX: 
+  // Viewers ko chat allow karne ke liye unhe storage access dena padega.
+  // Drawing lock ab 100% hamare React frontend guard par dependent hai.
+  if (isOwner || board.linkAccess === "edit" || board.linkAccess === "view") {
     session.allow(room, session.FULL_ACCESS);
-  } else if (board.linkAccess === "edit") {
-    session.allow(room, session.FULL_ACCESS);
-  } else if (board.linkAccess === "view") {
-    session.allow(room, session.READ_ACCESS);
   } else {
     // If it's set to "private" and they aren't the owner
     return new Response("Unauthorized: Forbidden: You do not have access to this board", { status: 403 });
