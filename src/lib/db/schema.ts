@@ -76,3 +76,11 @@ export const collaborators = pgTable("collaborators", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// 🔥 NEW: Follows Table for the Social Engine!
+export const follows = pgTable("follows", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  followerId: text("follower_id").notNull(), // The person who clicked "Follow"
+  followingEmail: text("following_email").notNull(), // The person being followed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     userInfo: {
       name: user.firstName || "Zyncro User",
       picture: user.imageUrl,
+      email: user.emailAddresses[0].emailAddress, // 🔥 NEW: We need this to change roles!
     },
   });
 
