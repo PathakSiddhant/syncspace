@@ -6,8 +6,9 @@ import { notFound, redirect } from "next/navigation";
 import { PlusCircle, Presentation, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CreateBoardModal } from "@/components/modals/create-board-modal"; // 🔥 NEW IMPORT
-
+import { CreateBoardModal } from "@/components/modals/create-board-modal";
+import { BoardOptions } from "@/components/board/board-options";
+import { WorkspaceOptions } from "@/components/dashboard/workspace-options"; // 🔥 NEW IMPORT
 
 interface WorkspacePageProps {
   params: {
@@ -49,12 +50,21 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
       {/* Header Area */}
       <div className="flex items-center justify-between mb-8 pb-6 border-b border-neutral-800">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-            {workspace.name}
-            <span className="text-sm font-normal px-2 py-1 bg-neutral-800 text-neutral-400 rounded-md">
-              Workspace
-            </span>
-          </h2>
+          {/* 🔥 NEW WORKSPACE HEADER WITH SETTINGS MENU */}
+          <div className="flex items-center gap-2">
+            <div className="h-10 w-10 rounded-lg bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+              <span className="text-emerald-500 font-bold text-xl">
+                {workspace.name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-white tracking-tight ml-2">
+                {workspace.name}
+              </h1>
+              {/* THE NEW WORKSPACE SETTINGS MENU */}
+              <WorkspaceOptions workspaceId={workspace.id} currentName={workspace.name} />
+            </div>
+          </div>
           <p className="text-neutral-400 mt-2">Manage all your canvas boards for this workspace here.</p>
         </div>
         
@@ -75,7 +85,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
             Your workspace is empty. Create your first Zyncro board to start collaborating in real-time.
           </p>
           
-          {/* 🔥 NEW: Using our Modal with a custom button design as children! */}
+          {/* Using our Modal with a custom button design as children! */}
           <CreateBoardModal workspaceId={workspaceId}>
             <Button className="bg-white text-black hover:bg-neutral-200 gap-2">
               <PlusCircle className="w-4 h-4" />
@@ -84,27 +94,29 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
           </CreateBoardModal>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {/* List of Boards */}
           {workspaceBoards.map((board) => (
-            <Link href={`/board/${board.id}`} key={board.id}>
-              <div className="group relative flex flex-col justify-between p-6 h-48 bg-neutral-900/50 border border-neutral-800 rounded-xl hover:border-emerald-500/50 hover:bg-neutral-800/50 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-emerald-900/10">
-                <div className="absolute inset-0 bg-linear-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-neutral-800 rounded-lg text-emerald-400 group-hover:bg-emerald-500/10 transition-colors">
-                      <Presentation className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white truncate">{board.title}</h3>
-                  </div>
-                  <p className="text-sm text-neutral-500">
-                    Updated {new Date(board.updatedAt).toLocaleDateString()}
-                  </p>
+            <Link 
+              key={board.id} 
+              href={`/board/${board.id}`}
+              className="group relative h-32 flex flex-col justify-between p-4 bg-neutral-900 border border-neutral-800 rounded-lg hover:border-emerald-500/50 hover:bg-neutral-800/50 transition-all cursor-pointer overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+              
+              <div className="flex justify-between items-start z-10">
+                <h3 className="font-medium text-white group-hover:text-emerald-400 transition-colors line-clamp-1 pr-2">
+                  {board.title}
+                </h3>
+                {/* 🔥 THE 3-DOTS MENU */}
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <BoardOptions boardId={board.id} workspaceId={workspaceId} currentTitle={board.title} />
                 </div>
-
-                <div className="flex items-center text-sm font-medium text-emerald-500 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 duration-300">
-                  Enter Canvas <ArrowRight className="w-4 h-4 ml-1" />
-                </div>
+              </div>
+              
+              <div className="text-xs text-neutral-500 z-10 flex items-center justify-between">
+                <span>Edited just now</span>
+                <span className="bg-neutral-800 px-2 py-1 rounded text-neutral-400 border border-neutral-700">Canvas</span>
               </div>
             </Link>
           ))}
