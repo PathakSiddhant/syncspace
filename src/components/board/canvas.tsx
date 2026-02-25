@@ -6,6 +6,9 @@ import { useSyncDemo } from "@tldraw/sync";
 import { useEffect, useState } from "react";
 import { useEventListener, useSelf, useBroadcastEvent } from "@liveblocks/react/suspense";
 
+// 🔥 STEP 1: Import our brand new Master Dock
+import { AIAssistant } from "@/components/board/ai-assistant";
+
 interface CanvasProps {
   boardId: string;
   isReadonly?: boolean;
@@ -46,18 +49,15 @@ function TldrawLiveblocksEngine({ dynamicReadonly }: { dynamicReadonly: boolean 
     const e = event as any;
     if (!editor || !me.info?.email) return;
 
-    // A. Someone clicked "Go to User" on MY avatar. They want my location!
     if (e.type === "GOTO_REQUEST" && e.targetEmail === me.info.email) {
       const camera = editor.getCamera();
       broadcast({ 
         type: "GOTO_RESPONSE", 
         requesterEmail: e.requesterEmail, 
-        // Sending my exact viewport coordinates back to them
         camera: { x: camera.x, y: camera.y, z: camera.z } 
       });
     }
 
-    // B. I received the location I asked for! Let's jump there!
     if (e.type === "GOTO_RESPONSE" && e.requesterEmail === me.info.email) {
       editor.setCamera({ x: e.camera.x, y: e.camera.y, z: e.camera.z });
     }
@@ -71,7 +71,6 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
   const [dynamicReadonly, setDynamicReadonly] = useState(isReadonly);
   const me = useSelf();
 
-  // Listen for role changes to switch tools instantly
   useEventListener(({ event }) => {
     const customEvent = event as any;
     if (customEvent.type === "ROLE_CHANGE" && customEvent.email === me.info?.email) {
@@ -99,8 +98,11 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
         store={store}
         components={{ TopPanel: () => null, SharePanel: () => null }}
       >
-        {/* Injecting our custom engine inside Tldraw! */}
+        {/* The Liveblocks Engine */}
         <TldrawLiveblocksEngine dynamicReadonly={dynamicReadonly} />
+        
+        {/* 🔥 STEP 2: The UI injection! Native Tldraw connection established! */}
+        <AIAssistant />
       </Tldraw>
       
       {dynamicReadonly && (
