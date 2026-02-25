@@ -218,7 +218,7 @@ export function LiveChat() {
         }
       }}
       enableResizing={isOpen ? { top: true, right: true, left: true, bottom: true, topLeft: true, topRight: true, bottomLeft: true, bottomRight: true } : false}
-      bounds="window"
+      // 🔥 FIX: 'bounds="window"' hata diya! Ab tera chat kahin bhi, kaise bhi drag ho sakta hai!
       dragHandleClassName="chat-drag-handle"
       style={{ position: "fixed", zIndex: 99999 }}
     >
