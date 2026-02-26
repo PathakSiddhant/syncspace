@@ -102,7 +102,8 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
         <TldrawLiveblocksEngine dynamicReadonly={dynamicReadonly} />
         
         {/* 🔥 YAHAN AB MASTER DOCK AAYEGA! */}
-        <FeatureDock />
+        {/* Yahan boardId pass kar diya! */}
+        <FeatureDock boardId={boardId} />
       </Tldraw>
       
       {dynamicReadonly && (
