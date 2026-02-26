@@ -6,8 +6,8 @@ import { useSyncDemo } from "@tldraw/sync";
 import { useEffect, useState } from "react";
 import { useEventListener, useSelf, useBroadcastEvent } from "@liveblocks/react/suspense";
 
-// 🔥 STEP 1: Import our brand new Master Dock
-import { AIAssistant } from "@/components/board/ai-assistant";
+// 🔥 STEP 1: Import changed - Purana AIAssistant hata diya, ab FeatureDock aa gaya
+import { FeatureDock } from "@/components/board/feature-dock";
 
 interface CanvasProps {
   boardId: string;
@@ -101,8 +101,8 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
         {/* The Liveblocks Engine */}
         <TldrawLiveblocksEngine dynamicReadonly={dynamicReadonly} />
         
-        {/* 🔥 STEP 2: The UI injection! Native Tldraw connection established! */}
-        <AIAssistant />
+        {/* 🔥 YAHAN AB MASTER DOCK AAYEGA! */}
+        <FeatureDock />
       </Tldraw>
       
       {dynamicReadonly && (
