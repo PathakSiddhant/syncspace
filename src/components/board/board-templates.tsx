@@ -239,8 +239,8 @@ export function BoardTemplates({ isOpen, onToggle }: BoardTemplatesProps) {
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[320px] bg-[#111111]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[0_24px_48px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200 z-[99999]">
-          <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/[0.03] shrink-0">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[320px] bg-[#111111]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[0_24px_48px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200 z-99999">
+          <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/3 shrink-0">
             <h3 className="text-sm font-semibold text-white flex items-center gap-2">
               <LayoutTemplate className="w-4 h-4 text-amber-400" />
               Template Library
@@ -251,50 +251,50 @@ export function BoardTemplates({ isOpen, onToggle }: BoardTemplatesProps) {
           </div>
           
           {/* 🔥 The Epic Scrollable Menu */}
-          <div className="p-2 flex flex-col max-h-[420px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+          <div className="p-2 flex flex-col max-h-105 overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
             
             {/* 1. Agile & Workflows */}
             <div className="px-3 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest mt-1">Agile & Workflows</div>
-            <Button onClick={() => handleInsertTemplate("kanban")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-indigo-500/10 hover:text-indigo-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("kanban")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-indigo-500/10 font-medium rounded-xl mb-1 transition-colors">
               <Columns className="w-4 h-4 text-indigo-400" /> Sprint Kanban
             </Button>
-            <Button onClick={() => handleInsertTemplate("retro")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-emerald-500/10 hover:text-emerald-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("retro")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-emerald-500/10 font-medium rounded-xl mb-1 transition-colors">
               <History className="w-4 h-4 text-emerald-400" /> Retrospective
             </Button>
-            <Button onClick={() => handleInsertTemplate("standup")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-blue-500/10 hover:text-blue-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("standup")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-blue-500/10 font-medium rounded-xl mb-1 transition-colors">
               <Clock className="w-4 h-4 text-blue-400" /> Daily Standup
             </Button>
-            <Button onClick={() => handleInsertTemplate("flowchart")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-orange-500/10 hover:text-orange-300 font-medium rounded-xl mb-2 transition-colors">
+            <Button onClick={() => handleInsertTemplate("flowchart")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-orange-500/10 font-medium rounded-xl mb-2 transition-colors">
               <Workflow className="w-4 h-4 text-orange-400" /> Process Flowchart
             </Button>
 
             {/* 2. Strategy & Analysis */}
             <div className="px-3 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest border-t border-white/5 mt-1 pt-3">Strategy & Analysis</div>
-            <Button onClick={() => handleInsertTemplate("swot")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-purple-500/10 hover:text-purple-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("swot")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-purple-500/10 font-medium rounded-xl mb-1 transition-colors">
               <Grid2x2 className="w-4 h-4 text-purple-400" /> SWOT Analysis
             </Button>
-            <Button onClick={() => handleInsertTemplate("eisenhower")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-red-500/10 hover:text-red-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("eisenhower")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-red-500/10 font-medium rounded-xl mb-1 transition-colors">
               <Target className="w-4 h-4 text-red-400" /> Eisenhower Matrix
             </Button>
-            <Button onClick={() => handleInsertTemplate("proscons")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-green-500/10 hover:text-green-300 font-medium rounded-xl mb-2 transition-colors">
+            <Button onClick={() => handleInsertTemplate("proscons")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-green-500/10 font-medium rounded-xl mb-2 transition-colors">
               <ThumbsUp className="w-4 h-4 text-green-400" /> Pros & Cons List
             </Button>
 
             {/* 3. Ideation */}
             <div className="px-3 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest border-t border-white/5 mt-1 pt-3">Ideation & Problem Solving</div>
-            <Button onClick={() => handleInsertTemplate("brainstorm")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-yellow-500/10 hover:text-yellow-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("brainstorm")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-yellow-500/10 font-medium rounded-xl mb-1 transition-colors">
               <Lightbulb className="w-4 h-4 text-yellow-400" /> Brainstorming Cloud
             </Button>
-            <Button onClick={() => handleInsertTemplate("5whys")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-orange-500/10 hover:text-orange-300 font-medium rounded-xl mb-2 transition-colors">
+            <Button onClick={() => handleInsertTemplate("5whys")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-orange-500/10 font-medium rounded-xl mb-2 transition-colors">
               <HelpCircle className="w-4 h-4 text-orange-400" /> 5 Whys Analysis
             </Button>
 
             {/* 4. Product & Design */}
             <div className="px-3 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-widest border-t border-white/5 mt-1 pt-3">Product & Design</div>
-            <Button onClick={() => handleInsertTemplate("persona")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-cyan-500/10 hover:text-cyan-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("persona")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-cyan-500/10 font-medium rounded-xl mb-1 transition-colors">
               <User className="w-4 h-4 text-cyan-400" /> User Persona
             </Button>
-            <Button onClick={() => handleInsertTemplate("empathy")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-pink-500/10 hover:text-pink-300 font-medium rounded-xl mb-1 transition-colors">
+            <Button onClick={() => handleInsertTemplate("empathy")} variant="ghost" className="w-full justify-start gap-3 h-10 text-neutral-300 hover:text-white hover:bg-pink-500/10 font-medium rounded-xl mb-1 transition-colors">
               <GitMerge className="w-4 h-4 text-pink-400" /> Empathy Map
             </Button>
 

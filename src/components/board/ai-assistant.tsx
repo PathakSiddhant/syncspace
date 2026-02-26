@@ -83,7 +83,7 @@ export function AIAssistant({ isOpen, onToggle }: AIAssistantProps) {
         onClick={onToggle}
         variant="ghost"
         className={`group flex items-center gap-2.5 px-4 h-9 rounded-md transition-all duration-300 ${
-          isOpen ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30" : "bg-white/[0.03] hover:bg-white/[0.08] text-neutral-300 hover:text-white border border-transparent"
+          isOpen ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30" : "bg-white/3 hover:bg-white/8 text-neutral-300 hover:text-white border border-transparent"
         }`}
       >
         <Bot className={`w-4 h-4 ${isOpen ? "text-indigo-400" : "text-neutral-400 group-hover:text-indigo-400"}`} />
@@ -92,18 +92,18 @@ export function AIAssistant({ isOpen, onToggle }: AIAssistantProps) {
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[420px] bg-[#111111] border border-white/[0.08] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200">
-          <div className="flex items-center justify-between p-3.5 border-b border-white/[0.08] bg-white/[0.02]">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-105 bg-[#111111] border border-white/8 rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200">
+          <div className="flex items-center justify-between p-3.5 border-b border-white/8 bg-white/2">
             <h3 className="text-[13px] font-semibold text-white flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-400" />
               What would you like me to do?
             </h3>
-            <button onClick={onToggle} className="text-neutral-400 hover:text-white transition-colors p-1.5 hover:bg-white/[0.08] rounded-md">
+            <button onClick={onToggle} className="text-neutral-400 hover:text-white transition-colors p-1.5 hover:bg-white/8 rounded-md">
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="p-3 flex gap-2 border-b border-white/[0.08] bg-black/20">
+          <div className="p-3 flex gap-2 border-b border-white/8 bg-black/20">
             <Button onClick={() => handleGenerateAI("summary")} disabled={isAnalyzing} className="flex-1 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20 text-xs font-medium h-9 transition-colors shadow-none rounded-md">
               📝 Summarize Board
             </Button>
@@ -112,7 +112,7 @@ export function AIAssistant({ isOpen, onToggle }: AIAssistantProps) {
             </Button>
           </div>
 
-          <div className="p-5 h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 text-[13px] text-neutral-300 leading-relaxed bg-transparent">
+          <div className="p-5 h-75 overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700 text-[13px] text-neutral-300 leading-relaxed bg-transparent">
             {isAnalyzing ? (
               <div className="h-full flex flex-col items-center justify-center text-neutral-500 space-y-4">
                 <Loader2 className="w-7 h-7 animate-spin text-indigo-500" />
@@ -125,7 +125,7 @@ export function AIAssistant({ isOpen, onToggle }: AIAssistantProps) {
               </div>
             ) : (
               <div className="whitespace-pre-wrap">
-                <div className="flex items-center gap-2 text-emerald-400 mb-4 font-medium px-2.5 py-1.5 bg-emerald-500/10 rounded-md border border-emerald-500/20 inline-flex">
+                <div className="flex items-center gap-2 text-emerald-400 mb-4 font-medium px-2.5 py-1.5 bg-emerald-500/10 rounded-md border border-emerald-500/20">
                   <CheckCircle2 className="w-4 h-4" /> Task Completed
                 </div>
                 <div className="text-neutral-200">
