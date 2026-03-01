@@ -32,7 +32,8 @@ export function BoardTemplates({ isOpen, onToggle }: BoardTemplatesProps) {
         { id: createShapeId(), type: 'frame', x: sX - 50, y: sY - 50, props: { w: 1050, h: 800, name: '🚀 Sprint Kanban Board' } },
         // To Do Column
         { id: createShapeId(), type: 'geo', x: sX, y: sY, props: { w: 300, h: 60, geo: 'rectangle', fill: 'solid', color: 'grey' } },
-        { id: createShapeId(), type: 'text', x: sX + 100, y: sY + 12, props: { richText: toRichText('To Do 📌'), size: 'm', align: 'middle' } },
+        // 🔥 FIX: Removed 'align: middle' which was causing the crash
+        { id: createShapeId(), type: 'text', x: sX + 100, y: sY + 12, props: { richText: toRichText('To Do 📌'), size: 'm' } },
         { id: createShapeId(), type: 'geo', x: sX, y: sY + 70, props: { w: 300, h: 600, geo: 'rectangle', fill: 'semi', color: 'grey' } },
         { id: createShapeId(), type: 'note', x: sX + 50, y: sY + 100, props: { color: 'yellow', richText: toRichText('Task 1') } },
         // In Progress Column

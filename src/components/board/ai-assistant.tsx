@@ -22,12 +22,26 @@ export function AIAssistant({ isOpen, onToggle }: AIAssistantProps) {
       let boardContent = "";
       
       shapes.forEach((shape: any) => {
-        // 🚀 FIX: First check if 'richText' exists, if so, convert it. Otherwise fallback to old 'text' property
         let textValue = "";
-        if (shape.props?.richText) {
-          textValue = renderPlaintextFromRichText(shape.props.richText);
-        } else if (shape.props?.text) {
+        
+        // 1. Pehle normal text dhoondho (Notes aur Text shapes ke liye sabse safe)
+        if (shape.props?.text) {
           textValue = shape.props.text;
+        } 
+        // 2. Agar richText hai, toh safely extract karo
+        else if (shape.props?.richText) {
+          try {
+            // Agar Tldraw ke naye update mein textContent direct available hai
+            if (shape.props.richText.textContent) {
+              textValue = shape.props.richText.textContent;
+            } else {
+              // Purana method, par try-catch ke andar taaki app na phate
+              textValue = renderPlaintextFromRichText(shape.props.richText);
+            }
+          } catch (error) {
+            console.warn("AI Parser Skipped a malformed shape");
+            textValue = " "; // Crash hone se bachane ke liye khali string return karenge
+          }
         }
 
         if (typeof textValue === "string" && textValue.trim() !== "") {
