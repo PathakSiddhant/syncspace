@@ -2,20 +2,20 @@ import { HTMLContainer, ShapeUtil, TLBaseShape, Rectangle2d } from "tldraw";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-// 🔥 FIX: Added originalW and originalH to track the baseline for scaling
 export type CodeSnippetShape = TLBaseShape<
   "code-snippet",
   { code: string; language: string; w: number; h: number; originalW: number; originalH: number }
 >;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - Tldraw strict TLShape union bypass
 export class CodeSnippetShapeUtil extends ShapeUtil<CodeSnippetShape> {
   static override type = "code-snippet" as const;
 
-  // Allows arrows to connect to this shape
   override canBind = () => true;   
-  // Allows the user to resize it
   override canResize = () => true; 
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override onResize(shape: CodeSnippetShape, info: any) {
     return {
       props: {
@@ -41,15 +41,11 @@ export class CodeSnippetShapeUtil extends ShapeUtil<CodeSnippetShape> {
   }
 
   override component(shape: CodeSnippetShape) {
-    // 🔥 THE SCALING MAGIC: Calculate how much the user has stretched/shrunk the box
     const scaleX = shape.props.w / shape.props.originalW;
     const scaleY = shape.props.h / shape.props.originalH;
 
     return (
-      // 🔥 THE BINDING FIX: pointerEvents: 'none' lets Tldraw's arrow tool "see" the shape beneath!
       <HTMLContainer style={{ pointerEvents: 'none' }}>
-        
-        {/* We apply the scale transform here so it behaves EXACTLY like an image/SVG */}
         <div 
           style={{
             width: shape.props.originalW,
@@ -79,7 +75,6 @@ export class CodeSnippetShapeUtil extends ShapeUtil<CodeSnippetShape> {
             </div>
           </div>
         </div>
-
       </HTMLContainer>
     );
   }

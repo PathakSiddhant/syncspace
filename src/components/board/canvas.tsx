@@ -5,11 +5,7 @@ import "tldraw/tldraw.css";
 import { useSyncDemo } from "@tldraw/sync";
 import { useEffect, useState } from "react";
 import { useEventListener, useSelf, useBroadcastEvent } from "@liveblocks/react/suspense";
-
-// 🔥 STEP 1: Import changed - Purana AIAssistant hata diya, ab FeatureDock aa gaya
 import { FeatureDock } from "@/components/board/feature-dock";
-
-// 🔥 STEP 3: Register custom shapes
 import { CodeSnippetShapeUtil } from "@/components/board/shapes/code-shape";
 
 interface CanvasProps {
@@ -17,13 +13,11 @@ interface CanvasProps {
   isReadonly?: boolean;
 }
 
-// 🔥 THE LOCATOR & LOCK ENGINE (Runs inside Tldraw)
 function TldrawLiveblocksEngine({ dynamicReadonly }: { dynamicReadonly: boolean }) {
   const editor = useEditor();
   const me = useSelf();
   const broadcast = useBroadcastEvent();
 
-  // 1. The Read-Only Guard
   useEffect(() => {
     if (!editor) return;
     if (dynamicReadonly) {
@@ -47,8 +41,8 @@ function TldrawLiveblocksEngine({ dynamicReadonly }: { dynamicReadonly: boolean 
     return () => clearInterval(lockInterval);
   }, [editor, dynamicReadonly]);
 
-  // 2. The Figma-Style Viewport Locator (Walkie-Talkie)
   useEventListener(({ event }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const e = event as any;
     if (!editor || !me.info?.email) return;
 
@@ -69,20 +63,19 @@ function TldrawLiveblocksEngine({ dynamicReadonly }: { dynamicReadonly: boolean 
   return null;
 }
 
-// 🔥 Ek master array bana lo custom shapes ka
 const customShapeUtils = [CodeSnippetShapeUtil];
 
 export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
-  // 🔥 THE FIX: Store (Database) ko custom shape ke baare mein batao!
   const store = useSyncDemo({ 
     roomId: `zyncro-live-board-${boardId}`,
-    shapeUtils: customShapeUtils // Tldraw sync demo hook needs to know about custom shapes too
+    shapeUtils: customShapeUtils 
   });
   
   const [dynamicReadonly, setDynamicReadonly] = useState(isReadonly);
   const me = useSelf();
 
   useEventListener(({ event }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const customEvent = event as any;
     if (customEvent.type === "ROLE_CHANGE" && customEvent.email === me.info?.email) {
       setDynamicReadonly(customEvent.newRole === "view");
@@ -107,14 +100,10 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
 
       <Tldraw 
         store={store}
-        shapeUtils={customShapeUtils} // 🔥 Frontend ko bhi batao
+        shapeUtils={customShapeUtils}
         components={{ TopPanel: () => null, SharePanel: () => null }}
       >
-        {/* The Liveblocks Engine */}
         <TldrawLiveblocksEngine dynamicReadonly={dynamicReadonly} />
-        
-        {/* 🔥 YAHAN AB MASTER DOCK AAYEGA! */}
-        {/* Yahan boardId pass kar diya! */}
         <FeatureDock boardId={boardId} />
       </Tldraw>
       
