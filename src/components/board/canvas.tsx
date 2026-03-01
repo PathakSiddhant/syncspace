@@ -9,6 +9,9 @@ import { useEventListener, useSelf, useBroadcastEvent } from "@liveblocks/react/
 // 🔥 STEP 1: Import changed - Purana AIAssistant hata diya, ab FeatureDock aa gaya
 import { FeatureDock } from "@/components/board/feature-dock";
 
+// 🔥 STEP 3: Register custom shapes
+import { CodeSnippetShapeUtil } from "@/components/board/shapes/code-shape";
+
 interface CanvasProps {
   boardId: string;
   isReadonly?: boolean;
@@ -66,8 +69,16 @@ function TldrawLiveblocksEngine({ dynamicReadonly }: { dynamicReadonly: boolean 
   return null;
 }
 
+// 🔥 Ek master array bana lo custom shapes ka
+const customShapeUtils = [CodeSnippetShapeUtil];
+
 export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
-  const store = useSyncDemo({ roomId: `zyncro-live-board-${boardId}` });
+  // 🔥 THE FIX: Store (Database) ko custom shape ke baare mein batao!
+  const store = useSyncDemo({ 
+    roomId: `zyncro-live-board-${boardId}`,
+    shapeUtils: customShapeUtils // Tldraw sync demo hook needs to know about custom shapes too
+  });
+  
   const [dynamicReadonly, setDynamicReadonly] = useState(isReadonly);
   const me = useSelf();
 
@@ -96,6 +107,7 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
 
       <Tldraw 
         store={store}
+        shapeUtils={customShapeUtils} // 🔥 Frontend ko bhi batao
         components={{ TopPanel: () => null, SharePanel: () => null }}
       >
         {/* The Liveblocks Engine */}

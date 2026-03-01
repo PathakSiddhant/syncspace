@@ -21,70 +21,30 @@ export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
     if (!code.trim()) return;
 
     const camera = tldrawEditor.getCamera();
-    // Center it nicely on the screen
     const sX = camera.x + window.innerWidth / 4; 
     const sY = camera.y + window.innerHeight / 4;
 
-    const bgId = createShapeId();
-    const dotRedId = createShapeId();
-    const dotYellowId = createShapeId();
-    const dotGreenId = createShapeId();
-    const textId = createShapeId();
-
+    // Dynamically calculate the beautiful window size based on code length
     const lines = code.split('\n');
-    const estimatedHeight = Math.max(150, lines.length * 30 + 80);
+    const estimatedHeight = Math.max(180, lines.length * 24 + 70); 
     const maxLineLength = lines.reduce((a, b) => a.length > b.length ? a : b).length;
-    const estimatedWidth = Math.max(400, Math.min(800, maxLineLength * 12 + 60));
+    const estimatedWidth = Math.max(450, Math.min(900, maxLineLength * 9.5 + 60));
 
-    // 1. CREATE THE TERMINAL SNAPSHOT
-    tldrawEditor.createShapes([
-      // A. Solid Jet Black Background (Ab koi khokhla grey nahi!)
-      { 
-        id: bgId, 
-        type: 'geo', 
-        x: sX, 
-        y: sY, 
-        props: { geo: 'rectangle', w: estimatedWidth, h: estimatedHeight, fill: 'solid', color: 'black' } 
-      },
-      // B. Mac Window Controls (Solid Red, Yellow, Green)
-      { 
-        id: dotRedId, 
-        type: 'geo', 
-        x: sX + 20, 
-        y: sY + 20, 
-        props: { geo: 'ellipse', w: 16, h: 16, fill: 'solid', color: 'red' } 
-      },
-      { 
-        id: dotYellowId, 
-        type: 'geo', 
-        x: sX + 45, 
-        y: sY + 20, 
-        props: { geo: 'ellipse', w: 16, h: 16, fill: 'solid', color: 'yellow' } 
-      },
-      { 
-        id: dotGreenId, 
-        type: 'geo', 
-        x: sX + 70, 
-        y: sY + 20, 
-        props: { geo: 'ellipse', w: 16, h: 16, fill: 'solid', color: 'green' } 
-      },
-      // C. The Code Text (Hacker Style Light-Green on Black, no crashes!)
-      { 
-        id: textId, 
-        type: 'text', 
-        x: sX + 20, 
-        y: sY + 60, 
-        props: { 
-          text: code,    // Sirf text use kiya taaki koi property error na aaye
-          font: 'mono', 
-          size: 's', 
-          color: 'light-green' // Best looking readable color on Tldraw's black shape
-        } 
+    // 🔥 Boom! Firing our completely custom component with Original Sizes
+    tldrawEditor.createShapes([{
+      id: createShapeId(),
+      type: 'code-snippet',
+      x: sX,
+      y: sY,
+      props: { 
+        code: code,
+        language: language,
+        w: estimatedWidth,
+        h: estimatedHeight,
+        originalW: estimatedWidth, // 👈 THE NEW ADDITION
+        originalH: estimatedHeight // 👈 THE NEW ADDITION
       }
-    ]);
-
-    // 2. GROUP THEM INTO ONE SOLID CARD
-    tldrawEditor.groupShapes([bgId, dotRedId, dotYellowId, dotGreenId, textId]);
+    }]);
 
     setTimeout(() => {
       tldrawEditor.zoomToFit({ animation: { duration: 500 } });
