@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Editor from "@monaco-editor/react";
-import { useEditor, createShapeId, toRichText } from "tldraw";
-// 🔥 FIX: Faltu icons (Blocks, Terminal) hata diye, sirf clean UI rakha hai
+import { useEditor, createShapeId } from "tldraw";
 import { Code2, X, CopyCheck, FolderCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// 🔥 THE MULTIPLAYER IMPORTS
+import { useRoom } from "@liveblocks/react";
+import * as Y from "yjs";
+import { LiveblocksYjsProvider } from "@liveblocks/yjs";
+import { MonacoBinding } from "y-monaco";
 
 interface LiveCodePanelProps {
   isOpen: boolean;
@@ -14,35 +19,40 @@ interface LiveCodePanelProps {
 
 export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
   const tldrawEditor = useEditor();
+  const room = useRoom(); 
   const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState("// Welcome to SyncSpace Live Code!\n// Write your logic here...\n\nfunction init() {\n  console.log('Ready to collaborate!');\n}");
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const editorRef = useRef<any>(null);
 
   const handlePinToBoard = () => {
-    if (!code.trim()) return;
+    if (!editorRef.current) return;
+    const currentCode = editorRef.current.getValue();
+
+    if (!currentCode.trim()) return;
 
     const camera = tldrawEditor.getCamera();
     const sX = camera.x + window.innerWidth / 4; 
     const sY = camera.y + window.innerHeight / 4;
 
-    // Dynamically calculate the beautiful window size based on code length
-    const lines = code.split('\n');
+    const lines = currentCode.split('\n');
     const estimatedHeight = Math.max(180, lines.length * 24 + 70); 
-    const maxLineLength = lines.reduce((a, b) => a.length > b.length ? a : b).length;
+    const maxLineLength = lines.reduce((a: string, b: string) => a.length > b.length ? a : b).length;
     const estimatedWidth = Math.max(450, Math.min(900, maxLineLength * 9.5 + 60));
 
-    // 🔥 Boom! Firing our completely custom component with Original Sizes
     tldrawEditor.createShapes([{
       id: createShapeId(),
-      type: 'code-snippet',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      type: 'code-snippet' as any, // 👈 FIX: ESLint ignored for necessary cast
       x: sX,
       y: sY,
       props: { 
-        code: code,
+        code: currentCode, 
         language: language,
         w: estimatedWidth,
         h: estimatedHeight,
-        originalW: estimatedWidth, // 👈 THE NEW ADDITION
-        originalH: estimatedHeight // 👈 THE NEW ADDITION
+        originalW: estimatedWidth,
+        originalH: estimatedHeight
       }
     }]);
 
@@ -50,6 +60,37 @@ export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
       tldrawEditor.zoomToFit({ animation: { duration: 500 } });
     }, 100);
   };
+
+  // ==========================================
+  // 🚀 THE MULTIPLAYER MAGIC ENGINE
+  // ==========================================
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleEditorDidMount = (editor: any) => { 
+    editorRef.current = editor;
+
+    const ydoc = new Y.Doc();
+    const provider = new LiveblocksYjsProvider(room, ydoc);
+    const ytext = ydoc.getText("monaco");
+
+    const binding = new MonacoBinding(
+      ytext,
+      editor.getModel(),
+      new Set([editor]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      provider.awareness as any // 👈 FIX: ESLint ignored for necessary cast
+    );
+
+    if (ytext.length === 0) {
+      ytext.insert(0, "// Welcome to SyncSpace Multiplayer IDE!\n// Start typing with your team...\n\nfunction init() {\n  console.log('We are live!');\n}");
+    }
+
+    return () => {
+      binding.destroy();
+      provider.destroy();
+      ydoc.destroy();
+    };
+  };
+  // ==========================================
 
   const getExtension = (lang: string) => {
     switch(lang) {
@@ -76,9 +117,8 @@ export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[750px] h-[500px] bg-[#1e1e1e] border border-white/10 rounded-xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in slide-in-from-top-4 fade-in duration-300 z-[99999]">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-187.5 h-125 bg-[#1e1e1e] border border-white/10 rounded-xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in slide-in-from-top-4 fade-in duration-300 z-99999">
           
-          {/* Header */}
           <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d2d] border-b border-[#1e1e1e] select-none cursor-move">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
@@ -94,12 +134,10 @@ export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
           </div>
 
           <div className="flex flex-1 overflow-hidden">
-            {/* 🔥 FIX: Clean Sidebar with ONLY the File icon */}
             <div className="w-12 bg-[#333333] flex flex-col items-center py-4 border-r border-[#1e1e1e]">
               <FolderCode className="w-5 h-5 text-white cursor-pointer transition-colors" />
             </div>
 
-            {/* Editor Area */}
             <div className="flex-1 flex flex-col bg-[#1e1e1e]">
               <div className="flex items-center justify-between bg-[#252526] pr-2 h-10">
                 <div className="flex items-center h-full">
@@ -123,7 +161,7 @@ export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
                   
                   <Button 
                     onClick={handlePinToBoard}
-                    className="h-7 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[4px] px-3 flex items-center gap-1.5 shadow-md transition-transform hover:scale-105"
+                    className="h-7 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3 flex items-center gap-1.5 shadow-md transition-transform hover:scale-105"
                   >
                     <CopyCheck className="w-3.5 h-3.5" />
                     <span className="text-[11px] font-medium tracking-wide">Pin Snippet</span>
@@ -137,8 +175,7 @@ export function LiveCodePanel({ isOpen, onToggle }: LiveCodePanelProps) {
                   width="100%"
                   theme="vs-dark"
                   language={language}
-                  value={code}
-                  onChange={(value) => setCode(value || "")}
+                  onMount={handleEditorDidMount} 
                   options={{
                     minimap: { enabled: false },
                     fontSize: 14,
