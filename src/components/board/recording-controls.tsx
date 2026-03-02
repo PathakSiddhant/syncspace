@@ -211,7 +211,7 @@ export function RecordingControls({ isOwner = false }: RecordingControlsProps) {
 
   // 🔥 THE CINEMATIC PREVIEW MODAL
   const previewModal = recordedVideoUrl && (
-    <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-999999 flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div className="bg-[#111] border border-white/10 p-5 rounded-2xl shadow-2xl w-[80vw] max-w-4xl flex flex-col gap-4 animate-in zoom-in-95 duration-300">
         
         <div className="flex items-center justify-between px-1">
@@ -257,7 +257,7 @@ export function RecordingControls({ isOwner = false }: RecordingControlsProps) {
       
       {/* 📸 Resizable Camera Wrapper */}
       <div style={{ width: camSize, height: camSize }} className="relative group">
-        <div className="w-full h-full rounded-full overflow-hidden border-[4px] border-[#222] shadow-[0_20px_40px_rgba(0,0,0,0.8)] bg-black">
+        <div className="w-full h-full rounded-full overflow-hidden border-4 border-[#222] shadow-[0_20px_40px_rgba(0,0,0,0.8)] bg-black">
           <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover mirror-mode pointer-events-none" style={{ transform: "scaleX(-1)" }} />
         </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none text-white/50 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">
