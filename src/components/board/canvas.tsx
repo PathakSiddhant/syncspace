@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useEventListener, useSelf, useBroadcastEvent } from "@liveblocks/react/suspense";
 import { FeatureDock } from "@/components/board/feature-dock";
 import { CodeSnippetShapeUtil } from "@/components/board/shapes/code-shape";
+import { RecordingControls } from "./recording-controls";
 
 interface CanvasProps {
   boardId: string;
@@ -107,6 +108,9 @@ export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
         <FeatureDock boardId={boardId} />
       </Tldraw>
       
+      {/* 👈 Test karne ke liye isOwner={true} pass kar diya */}
+      <RecordingControls isOwner={true} /> 
+
       {dynamicReadonly && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 bg-neutral-900 border border-neutral-800 rounded-full shadow-2xl z-9999 text-sm font-semibold text-neutral-300 flex items-center gap-3">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.7)]"></span>
