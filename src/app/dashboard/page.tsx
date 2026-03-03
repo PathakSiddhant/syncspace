@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">No workspaces yet</h3>
           <p className="text-neutral-400 max-w-sm text-center mb-6">
-            Create your first Zyncro workspace to start organizing your boards and collaborating with your team.
+            Create your first SyncSpace workspace to start organizing your boards and collaborating with your team.
           </p>
           <CreateWorkspaceModal />
         </div>

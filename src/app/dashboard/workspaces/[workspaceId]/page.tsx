@@ -82,7 +82,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">No boards created yet</h3>
           <p className="text-neutral-400 max-w-sm text-center mb-6">
-            Your workspace is empty. Create your first Zyncro board to start collaborating in real-time.
+            Your workspace is empty. Create your first SyncSpace board to start collaborating in real-time.
           </p>
           
           {/* Using our Modal with a custom button design as children! */}

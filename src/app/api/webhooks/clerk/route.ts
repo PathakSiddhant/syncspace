@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       await db.insert(users).values({
         id: id,
         email: email,
-        name: name || 'Zyncro User',
+        name: name || 'SyncSpace User',
         imageUrl: image_url,
       });
       console.log(`[Webhook] User ${id} successfully inserted into Neon DB!`);

@@ -68,7 +68,7 @@ const customShapeUtils = [CodeSnippetShapeUtil];
 
 export function Canvas({ boardId, isReadonly = false }: CanvasProps) {
   const store = useSyncDemo({ 
-    roomId: `zyncro-live-board-${boardId}`,
+    roomId: `SyncSpace-live-board-${boardId}`,
     shapeUtils: customShapeUtils 
   });
   

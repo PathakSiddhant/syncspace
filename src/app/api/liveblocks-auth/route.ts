@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   // 2. Prepare Liveblocks Session (With Email payload for our role switching logic)
   const session = liveblocks.prepareSession(user.id, {
     userInfo: {
-      name: user.firstName || "Zyncro User",
+      name: user.firstName || "SyncSpace User",
       picture: user.imageUrl,
       email: user.emailAddresses[0].emailAddress,
     },
