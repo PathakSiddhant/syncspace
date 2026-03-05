@@ -19,21 +19,20 @@ export function Sidebar() {
     <aside
       className={cn(
         "relative flex flex-col border-r border-neutral-800 bg-neutral-950 h-screen transition-all duration-300 ease-in-out shrink-0",
-        isCollapsed ? "w-20" : "w-72" // 👈 thoda aur wide kar diya
+        isCollapsed ? "w-20" : "w-64"
       )}
     >
       {/* Header Area */}
-      <div
-        className={cn(
-          "h-16 flex items-center border-b border-neutral-800 transition-all duration-300",
-          isCollapsed ? "justify-center px-0" : "justify-between px-4"
-        )}
-      >
-        {/* Logo */}
-        <div
+      <div className={cn(
+        "h-16 flex items-center border-b border-neutral-800 transition-all duration-300",
+        isCollapsed ? "justify-center px-0" : "justify-between px-4"
+      )}>
+        {/* Logo with smooth width/opacity transition */}
+        <div 
           className={cn(
-            "overflow-hidden transition-all duration-300 ease-in-out",
-            isCollapsed ? "w-0 opacity-0" : "w-44 opacity-100" // 👈 yaha fix kiya
+            "overflow-hidden transition-all duration-300 ease-in-out", 
+            // 🔥 FIX: w-24 ko w-32 (128px) kar diya taaki pura naam fit ho jaye
+            isCollapsed ? "w-0 opacity-0" : "w-32 opacity-100" 
           )}
         >
           <h1 className="text-xl font-bold tracking-tight text-white whitespace-nowrap">
@@ -45,11 +44,7 @@ export function Sidebar() {
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2 rounded-md text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors outline-none shrink-0"
         >
-          {isCollapsed ? (
-            <PanelLeftOpen className="w-5 h-5" />
-          ) : (
-            <PanelLeftClose className="w-5 h-5" />
-          )}
+          {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
         </button>
       </div>
 
@@ -62,15 +57,15 @@ export function Sidebar() {
             className={cn(
               "flex items-center rounded-lg transition-all duration-300",
               isCollapsed ? "justify-center p-3" : "px-3 py-2",
-              pathname === route.href
-                ? "bg-neutral-800/50 text-emerald-400"
+              pathname === route.href 
+                ? "bg-neutral-800/50 text-emerald-400" 
                 : "text-neutral-400 hover:bg-neutral-800/50 hover:text-white"
             )}
             title={isCollapsed ? route.label : undefined}
           >
             <route.icon className="w-5 h-5 shrink-0" />
-
-            <div
+            
+            <div 
               className={cn(
                 "overflow-hidden transition-all duration-300 ease-in-out flex items-center",
                 isCollapsed ? "w-0 opacity-0 ml-0" : "w-40 opacity-100 ml-3"
@@ -85,17 +80,15 @@ export function Sidebar() {
       </nav>
 
       {/* User Profile Area */}
-      <div
-        className={cn(
-          "p-4 border-t border-neutral-800 flex items-center transition-all duration-300",
-          isCollapsed ? "justify-center" : "justify-start px-4"
-        )}
-      >
+      <div className={cn(
+        "p-4 border-t border-neutral-800 flex items-center transition-all duration-300", 
+        isCollapsed ? "justify-center" : "justify-start px-4"
+      )}>
         <div className="shrink-0 flex items-center justify-center">
           <UserButton afterSignOutUrl="/" />
         </div>
-
-        <div
+        
+        <div 
           className={cn(
             "overflow-hidden transition-all duration-300 ease-in-out",
             isCollapsed ? "w-0 opacity-0 ml-0" : "w-32 opacity-100 ml-3"
